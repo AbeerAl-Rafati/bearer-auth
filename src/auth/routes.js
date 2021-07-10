@@ -7,41 +7,54 @@ const User = require('./models/users.js');
 const basicAuth = require('./middleware/basic.js')
 const bearerAuth = require('./middleware/bearer.js')
 
-
-
-
 authRouter.post('/signup', async (req, res, next) => {
   try {
-    const user = new User(req.body);
+    let user = new User(req.body);
     const userRecord = await user.save();
-    const token = User.generateToken(userRecord);
     const output = {
       user: userRecord,
       token: userRecord.token
     };
     res.status(201).json(output);
   } catch (e) {
-    res.status(403).json({ message: 'Error Creating User' });
+    next(e.message)
   }
 });
 
 authRouter.post('/signin', basicAuth, (req, res, next) => {
-  const user = {
-    user: request.user,
-    token: request.user.token
-  };
+  try {
+    const user = {
+      user: req.user,
+      token: req.user.token
+    };
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(403).json({ error: error.message });
+  }
 
-  res.status(200).json({ user: user });
 });
 
 authRouter.get('/users', bearerAuth, async (req, res, next) => {
-  const users = await User.find({});
-  const list = users.map(user => user.username);
-  res.status(200).json({ user: list });
+  try {
+    const users = await User.find({});
+    const list = users.map(user => user.username);
+    res.status(200).json(list);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+
+
+
 });
 
 authRouter.get('/secret', bearerAuth, async (req, res, next) => {
-  res.status(200).send("Welcome to the secret area!")
+  try {
+    res.status(200).send("Welcome to the secret area!")
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+
+
 });
 
 

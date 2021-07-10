@@ -26,13 +26,5 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.15",
     "morgan": "^1.10.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AbeerAl-Rafati/bearer-auth.git"
-  },
-  "bugs": {
-    "url": "https://github.com/AbeerAl-Rafati/bearer-auth/issues"
-  },
-  "homepage": "https://github.com/AbeerAl-Rafati/bearer-auth#readme"
+  }
 }

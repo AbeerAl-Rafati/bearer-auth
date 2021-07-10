@@ -1,26 +1,21 @@
 'use strict';
 
-const users = require('../models/users.js')
-
+const users = require('../models/users')
+require("dotenv").config();
 module.exports = async (req, res, next) => {
 
   try {
 
-    if (!req.headers.authorization) { next('missing auth headers!'); return; }
+    if (!req.headers.authorization || req.headers.authorization.split(' ')[0] !== 'Bearer') { res.status(403).send('Invalid Login'); return; }
 
     const token = req.headers.authorization.split(' ').pop();
-    if (headers[0] !== 'Bearer') {
-      next('invalid auth headers!');
-      return;
-    }
-
-    const validUser = await users.authenticateToken(token);
+    const validUser = await users.authenticateWithToken(token);
 
     req.user = validUser;
     req.token = validUser.token;
-
     next();
+
   } catch (e) {
-    res.status(403).send(e.message);;
+    res.status(403).send('Invalid Login');
   }
 }
