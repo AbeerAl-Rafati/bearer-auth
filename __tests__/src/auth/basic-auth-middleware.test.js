@@ -9,10 +9,10 @@ let users = {
 };
 
 // Pre-load our database with fake users
-beforeAll(async (done) => {
-  await new Users(users.admin).save();
-  done();
-});
+// beforeAll(async (done) => {
+//   await new Users(users.admin).save();
+//   done();
+// });
 
 describe('Auth Middleware', () => {
 
@@ -44,8 +44,8 @@ describe('Auth Middleware', () => {
 
     }); // it()
 
-    it('logs in an admin user with the right credentials', () => {
-
+    it('logs in an admin user with the right credentials', async() => {
+      await new Users(users.admin).save();
       // Change the request to match this test case
       req.headers = {
         authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',

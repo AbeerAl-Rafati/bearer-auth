@@ -6,6 +6,10 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config()
 const base64 = require('base-64');
 
+
+
+let secretWord =process.env.SECRET
+
 const users = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -17,12 +21,12 @@ users.virtual('token').get(function () {
   let tokenObject = {
     username: this.username,
   }
-  return jwt.sign(tokenObject, base64.encode(process.env.SECRET));
+  return jwt.sign(tokenObject,secretWord);
 });
 
 users.pre('save', async function () {
   if (this.isModified('password')) {
-    this.password = bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, 10);
   }
 });
 
@@ -41,7 +45,7 @@ users.statics.authenticateBasic = async function (username, password) {
 // BEARER AUTH
 users.statics.authenticateWithToken = async function (token) {
   try {
-    const payload = jwt.verify(token, base64.encode(process.env.SECRET));
+    const payload = jwt.verify(token, secretWord);
     const user = await this.findOne({ username: payload.username })
     if (user) { return user; }
     throw new Error("User Not Found");

@@ -1,6 +1,6 @@
 'use strict';
 
-process.env.SECRET = "toes";
+let secretWord= process.env.SECRET || "toes";
 
 require('@code-fellows/supergoose');
 const middleware = require('../../../src/auth/middleware/bearer.js');
@@ -12,10 +12,10 @@ let users = {
 };
 
 // Pre-load our database with fake users
-beforeAll(async (done) => {
-  await new Users(users.admin).save();
-  done();
-});
+// beforeAll(async (done) => {
+//   await new Users(users.admin).save();
+//   done();
+// });
 
 describe('Auth Middleware', () => {
 
@@ -43,11 +43,11 @@ describe('Auth Middleware', () => {
 
     });
 
-    it('logs in a user with a proper token', () => {
+    it('logs in a user with a proper token', async() => {
 
       const user = { username: 'admin' };
-      const token = jwt.sign(user, process.env.SECRET);
-
+      const token = jwt.sign(user, secretWord);
+      await new Users(users.admin).save();
       req.headers = {
         authorization: `Bearer ${token}`,
       };
