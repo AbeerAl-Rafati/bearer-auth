@@ -3,9 +3,9 @@
 const express = require('express');
 const authRouter = express.Router();
 
-const User = require('./models/users.js');
-const basicAuth = require('./middleware/basic.js')
-const bearerAuth = require('./middleware/bearer.js')
+const User = require('./models/users');
+const basicAuth = require('./middleware/basic')
+const bearerAuth = require('./middleware/bearer')
 
 authRouter.post('/signup', async (req, res, next) => {
   try {
@@ -22,37 +22,31 @@ authRouter.post('/signup', async (req, res, next) => {
 });
 
 authRouter.post('/signin', basicAuth, (req, res, next) => {
-  try {
+  
     const user = {
       user: req.user,
       token: req.user.token
     };
     res.status(200).json(user);
-  } catch (error) {
-    res.status(403).json({ error: error.message });
-  }
+  
 
 });
 
 authRouter.get('/users', bearerAuth, async (req, res, next) => {
-  try {
+  
     const users = await User.find({});
     const list = users.map(user => user.username);
     res.status(200).json(list);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
+  
 
 
 
 });
 
 authRouter.get('/secret', bearerAuth, async (req, res, next) => {
-  try {
+
     res.status(200).send("Welcome to the secret area!")
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
+  
 
 
 });
